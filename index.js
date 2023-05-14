@@ -42,7 +42,6 @@ for (let i = 1; i <= 100; i++) {
   let totalReviewText = ""
   while (true) {
     const nextChar = data[totalReviewStart + 26 + totalReviewText.length]
-    console.log(nextChar)
     if (nextChar === "<" || nextChar === "\n") break; // end of text for total reviews
     totalReviewText += nextChar
   }
