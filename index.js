@@ -1,17 +1,17 @@
 import axios from "axios"
 import dayjs from "dayjs"
+import fs from "fs";
 
 // Top Header Row
 const thisYear = dayjs().get("year")
-let topRow = "Username,Profile ID,DGCR Member Page,"
+let resultText = "Username,Profile ID,DGCR Member Page,"
 for (let i = 2007; i <= thisYear; i++) {
-  topRow += `${i},`
+  resultText += `${i},`
 }
-topRow += "Total Reviews"
-console.log(topRow)
+resultText += "Total Reviews\n"
 
 const dateStart = "<td align=\"center\">\n"
-for (let i = 1; i <= 200; i++) {
+for (let i = 1; i <= 20; i++) {
   // Get the user page
   const url = `https://www.dgcoursereview.com/profile.php?id=${i}`
   const response = await axios.get(url)
@@ -64,10 +64,12 @@ for (let i = 1; i <= 200; i++) {
   })
 
   // Compile results
-  let resultText = `${username},${i},${url},`
+  let rowText = `${username},${i},${url},`
   yearCounts.forEach((count) => {
-    resultText += `${count},`
+    rowText += `${count},`
   })
-  resultText += String(totalReviews)
-  console.log(resultText)
+  rowText += String(totalReviews)
+  resultText += rowText + "\n"
 }
+
+fs.writeFile("./output.txt", resultText, (e) => {});
