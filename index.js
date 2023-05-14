@@ -11,8 +11,10 @@ for (let i = 2007; i <= thisYear; i++) {
 resultText += "Total Reviews\n"
 
 const dateStart = "<td align=\"center\">\n"
-for (let i = 1; i <= 104000; i++) {
-  if (i % 100 === 0) console.log(i)
+for (let i = 1; i <= 100; i++) {
+  if (i % 100 === 0)
+    console.log(i)
+  
   // Get the user page
   let data = "";
   const url = `https://www.dgcoursereview.com/profile.php?id=${i}`
@@ -23,13 +25,14 @@ for (let i = 1; i <= 104000; i++) {
   } catch (e) {
     console.log(`${i} failed`)
   }
-
+  
   // username, and make sure user is real
   const usernameStart = data.indexOf("<title>")
   if (data.substring(usernameStart + 7, usernameStart + 30) === "Disc Golf Course Review") continue;
   let username = ""
   while (true) {
     const nextChar = data[usernameStart + 7 + username.length]
+    // The ' character is the end of the username, since the page says, "kp1024's DGCourseReview Profile..."
     if (nextChar === "'") break;
     username += nextChar
   }
@@ -39,28 +42,31 @@ for (let i = 1; i <= 104000; i++) {
   let totalReviewText = ""
   while (true) {
     const nextChar = data[totalReviewStart + 26 + totalReviewText.length]
-    if (nextChar === "'") break;
+    console.log(nextChar)
+    if (nextChar === "<" || nextChar === "\n") break; // end of text for total reviews
     totalReviewText += nextChar
   }
   const totalReviews = Number.parseInt(totalReviewText)
-  if (totalReviews === 0) continue;
+  if (totalReviews === 0) continue; // Ignore users with no reviews
   
   const yearCounts = Array(17).fill(0) // number of reviews per year
 
-  // Review indexes
+  // Review indexes, showing where in the page the reviews are
   const reviewStart = data.indexOf("Review Date")
   const reviewEnd = data.indexOf("<td>Favorite</td>")
   var regex = /<td align="center">/gi, result, indices = [];
   while ( (result = regex.exec(data)) ) {
-      indices.push(result.index);
+    indices.push(result.index);
   }
-  // Review dates
+  // Get review dates
   indices.forEach((strIndex, arrIndex) => {
+    // Every review has three elements that match the regex above. Only the first one (mod 3 === 0) contains the date of the review
     if (strIndex > reviewStart && strIndex < reviewEnd && arrIndex % 3 === 0) {
       let text = "";
       let currentIndex = strIndex + dateStart.length
       while (true) {
         if (data[currentIndex] === " ") {
+          // text now contains the full date of the review
           yearCounts[dayjs(text).year() - 2007] += 1;
           break;
         }
@@ -79,4 +85,5 @@ for (let i = 1; i <= 104000; i++) {
   resultText += rowText + "\n"
 }
 
+// Output to file (this file is gitignored; it won't appear in the repo)
 fs.writeFile("./output.txt", resultText, (e) => {});
