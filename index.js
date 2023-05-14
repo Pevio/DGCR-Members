@@ -11,11 +11,18 @@ for (let i = 2007; i <= thisYear; i++) {
 resultText += "Total Reviews\n"
 
 const dateStart = "<td align=\"center\">\n"
-for (let i = 1; i <= 20; i++) {
+for (let i = 1; i <= 104000; i++) {
+  if (i % 100 === 0) console.log(i)
   // Get the user page
+  let data = "";
   const url = `https://www.dgcoursereview.com/profile.php?id=${i}`
-  const response = await axios.get(url)
-  const data = response.data;
+  try {
+    const response = await axios.get(url)
+    data = response.data;
+    if (!data) throw Error();
+  } catch (e) {
+    console.log(`${i} failed`)
+  }
 
   // username, and make sure user is real
   const usernameStart = data.indexOf("<title>")
