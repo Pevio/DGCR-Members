@@ -11,7 +11,7 @@ for (let i = 2007; i <= thisYear; i++) {
 resultText += "Total Reviews\n"
 
 const dateStart = "<td align=\"center\">\n"
-for (let i = 1; i <= 100; i++) {
+for (let i = 1; i <= 104000; i++) {
   if (i % 100 === 0)
     console.log(i)
   
@@ -21,9 +21,11 @@ for (let i = 1; i <= 100; i++) {
   try {
     const response = await axios.get(url)
     data = response.data;
+    console.log(data)
     if (!data) throw Error();
   } catch (e) {
-    console.log(`${i} failed`)
+    console.log(`Profile ${i} failed`)
+    continue;
   }
   
   // username, and make sure user is real
